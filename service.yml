@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: brain-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: brain-app
+  ports:
+    - port: 80
+      targetPort: 80
