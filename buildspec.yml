@@ -10,12 +10,11 @@ env:
 phases:
 
   install:
-  commands:
-    - echo Installing kubectl...
-    - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/latest/2023-11-14/bin/linux/amd64/kubectl
-    - chmod +x kubectl
-    - mv kubectl /usr/local/bin/
-    - kubectl version --client 
+    commands:
+      - echo Installing kubectl...
+      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+      - kubectl version --client
 
   pre_build:
     commands:
@@ -36,19 +35,10 @@ phases:
       - echo Pushing Docker image...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
-
-      - echo "Caller identity:"
-      - aws sts get-caller-identity
-
-      - echo "Testing EKS permission..."
-      - aws eks describe-cluster --region $AWS_REGION --name $CLUSTER_NAME
-
       - echo Updating kubeconfig...
       - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
-
       - echo Updating Kubernetes deployment image...
       - kubectl set image deployment/brain-tasks-deployment $CONTAINER_NAME=$REPOSITORY_URI:$IMAGE_TAG
-
       - echo Verifying rollout status...
       - kubectl rollout status deployment/brain-tasks-deployment
 
