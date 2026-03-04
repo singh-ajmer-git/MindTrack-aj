@@ -20,11 +20,13 @@ phases:
     commands:
       - echo Getting AWS Account ID...
       - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-
-      - echo Logging in to Amazon ECR...
       - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+      - echo Logging in to ECR...
+      - aws ecr get-login-password --region $AWS_REGION \
+        | docker login --username AWS --password-stdin \
+        $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
   build:
     commands:
@@ -33,22 +35,22 @@ phases:
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
 
   post_build:
-  commands:
-    - echo Pushing Docker image...
-    - docker push $REPOSITORY_URI:$IMAGE_TAG
-    - docker push $REPOSITORY_URI:latest
+    commands:
+      - echo Pushing image...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:latest
 
-    - echo Updating kubeconfig...
-    - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+      - echo Configuring kubectl...
+      - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
 
-    - echo Applying Kubernetes deployment...
-    - kubectl apply -f deployment.yml
+      - echo Applying deployment (create if not exists)...
+      - kubectl apply -f deployment.yml
 
-    - echo Updating image to new version...
-    - kubectl set image deployment/brain-app brain-app=$REPOSITORY_URI:$IMAGE_TAG
+      - echo Updating image in deployment...
+      - kubectl set image deployment/brain-app brain-app=$REPOSITORY_URI:$IMAGE_TAG
 
-    - echo Waiting for rollout to complete...
-    - kubectl rollout status deployment/brain-app
+      - echo Waiting for rollout...
+      - kubectl rollout status deployment/brain-app
 
 artifacts:
   files:
