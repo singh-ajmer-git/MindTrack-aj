@@ -5,21 +5,24 @@ env:
     AWS_REGION: "us-west-2"
     ECR_REPO_NAME: "brain-tasks-repo"
     CLUSTER_NAME: "brain-cluster"
-    CONTAINER_NAME: "brain-tasks-container"
 
 phases:
 
   install:
     commands:
       - echo Installing kubectl...
-      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-      - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+      - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/latest/2023-11-14/bin/linux/amd64/kubectl
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/kubectl
       - kubectl version --client
 
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR...
+      - echo Getting AWS Account ID...
       - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - echo Account ID is $ACCOUNT_ID
+
+      - echo Logging in to Amazon ECR...
       - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
@@ -35,12 +38,18 @@ phases:
       - echo Pushing Docker image...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
+
       - echo Updating kubeconfig...
       - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+
+      - echo Checking existing deployments...
+      - kubectl get deployments
+
       - echo Updating Kubernetes deployment image...
-      - kubectl set image deployment/brain-tasks-deployment $CONTAINER_NAME=$REPOSITORY_URI:$IMAGE_TAG
+      - kubectl set image deployment/brain-app brain-app=$REPOSITORY_URI:$IMAGE_TAG
+
       - echo Verifying rollout status...
-      - kubectl rollout status deployment/brain-tasks-deployment
+      - kubectl rollout status deployment/brain-app
 
 artifacts:
   files:
