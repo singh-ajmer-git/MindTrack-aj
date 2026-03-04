@@ -33,19 +33,22 @@ phases:
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
 
   post_build:
-    commands:
-      - echo Pushing Docker image...
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - docker push $REPOSITORY_URI:latest
+  commands:
+    - echo Pushing Docker image...
+    - docker push $REPOSITORY_URI:$IMAGE_TAG
+    - docker push $REPOSITORY_URI:latest
 
-      - echo Updating kubeconfig...
-      - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+    - echo Updating kubeconfig...
+    - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
 
-      - echo Updating Kubernetes deployment image...
-      - kubectl set image deployment/brain-app brain-app=$REPOSITORY_URI:$IMAGE_TAG
+    - echo Applying Kubernetes deployment...
+    - kubectl apply -f deployment.yml
 
-      - echo Waiting for rollout to complete...
-      - kubectl rollout status deployment/brain-app
+    - echo Updating image to new version...
+    - kubectl set image deployment/brain-app brain-app=$REPOSITORY_URI:$IMAGE_TAG
+
+    - echo Waiting for rollout to complete...
+    - kubectl rollout status deployment/brain-app
 
 artifacts:
   files:
