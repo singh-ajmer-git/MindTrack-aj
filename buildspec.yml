@@ -10,10 +10,9 @@ env:
 phases:
 
   install:
-    
     commands:
       - echo Installing kubectl...
-      - curl -o kubectl https://amazon-eks.s3.ap-south-1.amazonaws.com/latest/2023-11-14/bin/linux/amd64/kubectl
+      - curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.29.0/2023-11-14/bin/linux/amd64/kubectl
       - chmod +x kubectl
       - mv kubectl /usr/local/bin/
 
@@ -36,6 +35,12 @@ phases:
       - echo Pushing Docker image...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
+
+      - echo "Caller identity:"
+      - aws sts get-caller-identity
+
+      - echo "Testing EKS permission..."
+      - aws eks describe-cluster --region $AWS_REGION --name $CLUSTER_NAME
 
       - echo Updating kubeconfig...
       - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
