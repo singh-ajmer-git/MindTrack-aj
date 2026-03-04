@@ -2,39 +2,51 @@ version: 0.2
 
 env:
   variables:
-    AWS_DEFAULT_REGION: us-west-2
-    ACCOUNT_ID: 524781515606
-    REPOSITORY_NAME: brain-tasks
-    CLUSTER_NAME: brain-cluster
-    DEPLOYMENT_NAME: brain-app
-    CONTAINER_NAME: brain-app
+    AWS_REGION: "us-west-2"
+    ECR_REPO_NAME: "brain-tasks-repo"
+    CLUSTER_NAME: "brain-cluster"
+    CONTAINER_NAME: "brain-tasks-container"
 
 phases:
+
+  install:
+    runtime-versions:
+      docker: 20
+    commands:
+      - echo Installing kubectl...
+      - curl -o kubectl https://amazon-eks.s3.ap-south-1.amazonaws.com/latest/2023-11-14/bin/linux/amd64/kubectl
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/
+
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
-      - IMAGE_URI=$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-
-      - echo Updating kubeconfig...
-      - aws eks update-kubeconfig --region $AWS_DEFAULT_REGION --name $CLUSTER_NAME
+      - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
   build:
     commands:
       - echo Building Docker image...
-      - docker build -t $IMAGE_URI .
-      - echo Build completed
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
 
   post_build:
     commands:
       - echo Pushing Docker image...
-      - docker push $IMAGE_URI
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:latest
 
-      - echo Deploying to EKS...
-      - kubectl set image deployment/$DEPLOYMENT_NAME $CONTAINER_NAME=$IMAGE_URI
+      - echo Updating kubeconfig...
+      - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
 
-      - echo Waiting for rollout...
-      - kubectl rollout status deployment/$DEPLOYMENT_NAME
+      - echo Updating Kubernetes deployment image...
+      - kubectl set image deployment/brain-tasks-deployment $CONTAINER_NAME=$REPOSITORY_URI:$IMAGE_TAG
 
-      - echo Deployment completed successfully
+      - echo Verifying rollout status...
+      - kubectl rollout status deployment/brain-tasks-deployment
+
+artifacts:
+  files:
+    - '**/*'
