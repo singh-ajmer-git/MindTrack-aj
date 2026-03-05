@@ -1,0 +1,23 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: brain-cluster
+  region: us-west-2
+  version: "1.34"
+
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]
+
+vpc:
+  nat:
+    gateway: Single
+
+managedNodeGroups:
+  - name: brain-nodes
+    instanceType: t3.medium
+    desiredCapacity: 2
+    minSize: 1
+    maxSize: 3
+    volumeSize: 20

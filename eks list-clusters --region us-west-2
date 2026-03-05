@@ -1,0 +1,118 @@
+{
+    "StackSummaries": [
+        {
+            "StackId": "arn:aws:cloudformation:us-west-2:524781515606:stack/eksctl-brain-cluster-nodegroup-brain-nodes/6a314970-1755-11f1-aedb-02be3aba6025",
+            "StackName": "eksctl-brain-cluster-nodegroup-brain-nodes",
+            "TemplateDescription": "EKS Managed Nodes (SSH access: false) [created by eksctl]",
+            "CreationTime": "2026-03-03T23:05:04.677000+00:00",
+            "StackStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            },
+            "LastOperations": [
+                {
+                    "OperationType": "CREATE_STACK",
+                    "OperationId": "f4d153dc-eed6-41f4-ad4e-0a55503599ec"
+                }
+            ]
+        },
+        {
+            "StackId": "arn:aws:cloudformation:us-west-2:524781515606:stack/eksctl-brain-cluster-cluster/de083400-1753-11f1-9525-0235bd70b0b1",
+            "StackName": "eksctl-brain-cluster-cluster",
+            "TemplateDescription": "EKS cluster (dedicated VPC: true, dedicated IAM: true) [created and managed by eksctl]",
+            "CreationTime": "2026-03-03T22:54:00.028000+00:00",
+            "StackStatus": "CREATE_COMPLETE",
+            "StackStatusReason": "Delete canceled. Cannot delete export eksctl-brain-cluster-cluster::ClusterSecurityGroupId as it is in use by eksctl-brain-cluster-nodegroup-brain-nodes.",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            },
+            "LastOperations": [
+                {
+                    "OperationType": "DELETE_STACK",
+                    "OperationId": "9830099c-09d1-46f2-a045-0f5f01b9ebaa"
+                }
+            ]
+        },
+        {
+            "StackId": "arn:aws:cloudformation:us-west-2:524781515606:stack/CodePipelineStarterTemplate-PushToECR-FhrVdapQ/1e5eb160-1690-11f1-a31a-022cc33639fd",
+            "StackName": "CodePipelineStarterTemplate-PushToECR-FhrVdapQ",
+            "CreationTime": "2026-03-02T23:32:46.611000+00:00",
+            "DeletionTime": "2026-03-02T23:37:35.760000+00:00",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            },
+            "LastOperations": [
+                {
+                    "OperationType": "DELETE_STACK",
+                    "OperationId": "fe42c87c-c514-4cdf-b69c-fc8ad3c8e939"
+                }
+            ]
+        },
+        {
+            "StackId": "arn:aws:cloudformation:us-west-2:524781515606:stack/CodePipelineStarterTemplate-PushToECR-7j7BhPku/6ba8e040-168f-11f1-805e-0262916d6d45",
+            "StackName": "CodePipelineStarterTemplate-PushToECR-7j7BhPku",
+            "CreationTime": "2026-03-02T23:27:46.794000+00:00",
+            "DeletionTime": "2026-03-02T23:32:25.161000+00:00",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            },
+            "LastOperations": [
+                {
+                    "OperationType": "DELETE_STACK",
+                    "OperationId": "e13ca8f4-ce9d-4c9b-adf0-ec97f334a51f"
+                }
+            ]
+        },
+        {
+            "StackId": "arn:aws:cloudformation:us-west-2:524781515606:stack/eksctl-brain-cluster-nodegroup-brain-nodes/88ad73d0-168b-11f1-90f1-06c4d1cd1dd9",
+            "StackName": "eksctl-brain-cluster-nodegroup-brain-nodes",
+            "TemplateDescription": "EKS Managed Nodes (SSH access: false) [created by eksctl]",
+            "CreationTime": "2026-03-02T22:59:57.488000+00:00",
+            "DeletionTime": "2026-03-03T00:00:26.514000+00:00",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            },
+            "LastOperations": [
+                {
+                    "OperationType": "DELETE_STACK",
+                    "OperationId": "dc523425-9d52-46e6-816a-f951ea319e11"
+                }
+            ]
+        },
+        {
+            "StackId": "arn:aws:cloudformation:us-west-2:524781515606:stack/eksctl-brain-cluster-cluster/fcf2d7a0-1689-11f1-8415-0af1bc2065e1",
+            "StackName": "eksctl-brain-cluster-cluster",
+            "TemplateDescription": "EKS cluster (dedicated VPC: true, dedicated IAM: true) [created and managed by eksctl]",
+            "CreationTime": "2026-03-02T22:48:53.556000+00:00",
+            "DeletionTime": "2026-03-03T00:10:13.491000+00:00",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            },
+            "LastOperations": [
+                {
+                    "OperationType": "DELETE_STACK",
+                    "OperationId": "9f6b4b30-082b-415e-8070-7964d0fe2106"
+                }
+            ]
+        },
+        {
+            "StackId": "arn:aws:cloudformation:us-west-2:524781515606:stack/CodePipelineStarterTemplate-PushToECR-2GH4vkDx/d748b700-15ca-11f1-9bab-023a276f1385",
+            "StackName": "CodePipelineStarterTemplate-PushToECR-2GH4vkDx",
+            "CreationTime": "2026-03-02T00:00:36.506000+00:00",
+            "StackStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            },
+            "LastOperations": [
+                {
+                    "OperationType": "CREATE_STACK",
+                    "OperationId": "c0c0d697-a76a-4bc5-86dd-97bb29b328e8"
+                }
+            ]
+        }
+    ]
+}
