@@ -43,6 +43,7 @@ phases:
 
       - echo Applying Kubernetes deployment...
       - kubectl apply -f deployment.yml
+      - kubectl apply -f service.yml
 
       - echo Updating deployment image...
       - kubectl set image deployment/brain-app brain-app=$REPOSITORY_URI:$IMAGE_TAG
